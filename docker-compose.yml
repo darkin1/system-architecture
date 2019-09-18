@@ -1,0 +1,25 @@
+version: '3'
+services:
+  
+  webapp:
+    image: nginx:1.17.3-alpine
+    volumes:
+      - ./webapp/:/app/
+      - ./vhosts/:/etc/nginx/conf.d/
+    working_dir: /app/
+    ports:
+      - 80:80
+    environment:
+      APP_ENV: development
+    links:
+      - webapp-php
+    restart: 'no' 
+
+  webapp-php:
+    image: php:7.2-fpm-alpine
+    working_dir: /app/
+    volumes:
+      - ./webapp/:/app/
+    environment:
+      APP_ENV: development
+    restart: 'no' 
