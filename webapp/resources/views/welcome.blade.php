@@ -80,6 +80,13 @@
             @endif
 
             <div class="content">
+                <div>
+                    <?php
+                        echo 'load balancer: ' . $_SERVER['REMOTE_ADDR'];
+                        echo '<br />';
+                        echo 'server: ' . $_SERVER['SERVER_ADDR'];
+                    ?>
+                </div>
                 <div class="title m-b-md">
                     Laravel
                 </div>
