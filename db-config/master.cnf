@@ -1,0 +1,13 @@
+[mysqld]
+log_bin=mysql-bin.log                      # ścieżka do pliku /var/lib/mysql/
+server-id=1                                # liczba od 1 do (2^32)-1
+
+# dodakowe ustawienia
+# expires_logs_days=10
+# max_binlog_size=100M
+
+# - jeśli pominiesz server-id albo ustawić wartość domyślną 0, master odrzuci połączenia od serwera slave
+# - dla zapewnienia największej stabilności i spójności danych podczas wykorzystywania silnika InnoDB z transakcjami,
+#   powinieneś ustawić flagi: innodb_flush_log_at_trx_commit=1, sync_binlog=1
+# - upewnij się że flaga skip-networking nie jest włączona na serwerze master, w przeciwnym razie połączenie sieciowe 
+#   zostanie wyłączone a serwer slave nie bedzie mógł komunikować się z serwerem master przez co replikacja nie powiedzie się

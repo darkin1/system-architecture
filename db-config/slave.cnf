@@ -1,0 +1,5 @@
+[mysqld]
+log_bin=mysql-bin.log                      # ścieżka do pliku /var/lib/mysql/
+server-id=2                                # liczba od 1 do (2^32)-1 
+
+# - server-id musi być unikalne, tzn. nie powtarzać się z server-id z innych serwerów slave, lub master

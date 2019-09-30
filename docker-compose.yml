@@ -1,9 +1,12 @@
 version: '3.7'
 services:
    
-  db:
+  db-master:
     image: mysql:8.0.17
     command: --default-authentication-plugin=mysql_native_password # plugin autentykacyjny wstecznie kompatybilny ze starszymi klientami
+    volumes:
+      - ./db-config/master.cnf:/etc//mysql/conf.d/master.cnf
+      - ./db-dump:/db-dump
     ports:
       - 3306:3306
     restart: 'no'
@@ -13,29 +16,29 @@ services:
       MYSQL_USER: cto
       MYSQL_PASSWORD: qwerty
 
-  webapp1:
-    image: nginx:1.17.3-alpine
-    # container_name: webapp_container_1 # nie można na sztywno ustalać nazwy kontenera 
+  db-slave:
+    image: mysql:8.0.17
+    command: --default-authentication-plugin=mysql_native_password # plugin autentykacyjny wstecznie kompatybilny ze starszymi klientami
     volumes:
-      - ./webapp/:/app/
-      - ./vhosts/:/etc/nginx/conf.d/
-    # usunięcie ports
-    working_dir: /app/
+      - ./db-config/slave.cnf:/etc//mysql/conf.d/slave.cnf
+      - ./db-dump:/db-dump
+    ports:
+      - 3307:3306
+    restart: 'no'
     environment:
-      VIRTUAL_HOST: https://webapp.development,http://webapp.development  # dodane, pamiętać aby dodać do /etc/hosts oraz w konfiguracji nginx
-    depends_on:
-      - webapp-php
-    restart: 'no' 
+      MYSQL_ROOT_PASSWORD: qwerty123
+      MYSQL_DATABASE: webapp
+      MYSQL_USER: cto
+      MYSQL_PASSWORD: qwerty
 
-  webapp2:
+  webapp:
     image: nginx:1.17.3-alpine
     volumes:
       - ./webapp/:/app/
       - ./vhosts/:/etc/nginx/conf.d/
     working_dir: /app/
-    # usunięcie ports
-    environment:
-      VIRTUAL_HOST: https://webapp.development,http://webapp.development # dodane
+    ports:
+      - 80:80
     depends_on:
       - webapp-php
     restart: 'no' 
@@ -48,17 +51,5 @@ services:
     environment:
       APP_ENV: development
     depends_on:
-      - db
+      - db-master
     restart: 'no'
-
-  balancer:
-    image: dockercloud/haproxy:1.6.7
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - webapp1
-    environment:
-      - ADDITIONAL_SERVICES=system-architecture:webapp1,system-architecture:webapp2 # dla wersji docker compose powyżej v2
