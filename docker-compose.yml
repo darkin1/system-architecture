@@ -41,7 +41,7 @@ services:
     restart: 'no' 
 
   webapp-php:
-    image: php:7.2-fpm-alpine
+    build: ./php
     working_dir: /app/
     volumes:
       - ./webapp/:/app/
