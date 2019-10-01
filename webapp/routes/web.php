@@ -14,3 +14,6 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/write', 'ProductsController@write');
+Route::get('/read', 'ProductsController@read');
