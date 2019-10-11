@@ -60,5 +60,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - webapp1
+      - webapp2
     environment:
       - ADDITIONAL_SERVICES=system-architecture:webapp1,system-architecture:webapp2 # dla wersji docker compose powyżej v2
